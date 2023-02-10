@@ -15,7 +15,13 @@ module.exports = {
         assetModuleFilename: 'assets/images/[hash][ext][query]'
     },
     resolve: {
-        extensions: ['.js']
+        extensions: ['.js'],
+        alias: {
+            '@utils': path.resolve(__dirname, 'src/utils/'),
+            '@templates': path.resolve(__dirname, 'src/templates/'),
+            '@styles': path.resolve(__dirname, 'src/styles/'),
+            '@images': path.resolve(__dirname, 'src/assets/images/')
+        }
     },
     module: {
         rules :[
@@ -38,18 +44,11 @@ module.exports = {
                 type: 'asset/resource'
             },
             {
-                test: /\.(woff|woff2)$/,
-                use: {
-                    loader: 'url-loader',
-                    options: {
-                        limit: 10000,
-                        mimetype: 'application/font-woff',
-                        name: '[name].[contenthash].[ext]',
-                        outputPath: './assets/fonts/',
-                        publicPath: './assets/fonts/',
-                        esModule: false,
-                    },
-                }
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: "asset/resource",
+                generator: {
+                filename: "assets/fonts/[hash][ext]",
+                },
             }
         ]
     },
@@ -59,7 +58,9 @@ module.exports = {
             template: "./public/index.html",
             filename: "./index.html"
         }),
-        new MiniCssExtractPlugin(),
+        new MiniCssExtractPlugin({
+            filename: "assets/[name].[contenthash].css"
+        }),
         new CopyPlugin({
             patterns: [
                 {
